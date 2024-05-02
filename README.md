@@ -1,5 +1,5 @@
 # rustscanhelper
-将rustscan输出结果以IP:PORT每行方式输出  
+将rustscan的-g方式输出结果以IP:PORT每行方式输出  
 ## 使用方法1
 对于扫描目标不多的情况，可以  
 rustscan -a xxx.xxx.xxx.xxx -r 1-65535 -g | ./rustscanhelper  
