@@ -1,28 +1,37 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
 
 func main() {
-	inputPath := flag.String("i", "", "解析rustscan -g输出结果的文件路径")
 	outputPath := flag.String("o", "", "输出结果文件路径")
+	inputPath := flag.String("i", "", "解析rustscan -g输出结果的文件路径")
 
 	flag.Parse()
 
+	var reader io.Reader
+	var content []byte
+	var err error
 	if *inputPath == "" {
-		fmt.Println("输入文件路径不能为空！")
-		return
+		reader = bufio.NewReader(os.Stdin)
+		content, err = io.ReadAll(reader)
+		if err != nil {
+			fmt.Println("rustscan输出内容读取失败:", err)
+			return
+		}
+	} else {
+		content, err = os.ReadFile(*inputPath)
+		if err != nil {
+			fmt.Println("读取文件失败:", err)
+			return
+		}
 	}
-	content, err := os.ReadFile(*inputPath)
-	if err != nil {
-		fmt.Println("读取文件失败:", err)
-		return
-	}
-
 	rawData := string(content)
 	data := make(map[string][]string)
 	lines := strings.Split(rawData, "\n")
@@ -57,7 +66,12 @@ func main() {
 		}
 		defer outputFile.Close()
 
-		outputFile.WriteString(result)
+		_, err = outputFile.WriteString(result)
+		if err != nil {
+			fmt.Println("输出文件失败：", err)
+			return
+		}
+		fmt.Println("已将结果输出到文件：" + *outputPath)
 	} else {
 		fmt.Println(result)
 	}
