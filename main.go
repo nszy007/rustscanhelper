@@ -39,6 +39,9 @@ func main() {
 		line = strings.TrimSpace(line)
 		if line != "" {
 			parts := strings.Split(line, " -> ")
+			if len(parts) != 2 {
+				continue
+			}
 			ip := parts[0]
 			var ports []string
 			portsStr := parts[1][1:]
